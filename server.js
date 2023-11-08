@@ -32,7 +32,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // routes
+app.all('/', (req, res) => res.send('Welcome to Portfol!'))
+app.all('/api-v1', (req, res) => res.send('Portfol API!'))
 app.use(router);
+
 
 //error middleware
 app.use(errorMiddleware);
