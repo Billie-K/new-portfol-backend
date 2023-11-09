@@ -130,7 +130,7 @@ export const signIn = async (req, res, next) => {
     const user = await Users.findOne({ email }).select("+password");
 
     if (!user) {
-      next("Invalid -email or password");
+      next("Invalid email or password");
       return;
     }
 
