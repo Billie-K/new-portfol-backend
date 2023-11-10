@@ -2,8 +2,8 @@
 
 const errorMiddleware = (err, req, res, next) => {
     const defaultError = {
-      statusCode: 400,
-      success: "failed",
+      statusCode: 404,
+      success: "falied",
       message: err,
     };
   

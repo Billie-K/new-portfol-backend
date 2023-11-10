@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from "dotenv";
+import 'dotenv/config'
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
@@ -9,12 +9,11 @@ import mongoSanitize from "express-mongo-sanitize";
 
 import dbConnection from "./dbConfig/dbConnection.js";
 import router from "./routes/index.js";
-import errorMiddleware from "./middlewares/errorMiddleware.js";
-
-dotenv.config();
+// import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 const app = express();
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 8800;
 
 // MONGODB CONNECTION
@@ -38,7 +37,7 @@ app.use(router);
 
 
 //error middleware
-app.use(errorMiddleware);
+// app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Dev Server running on port: ${PORT}`);

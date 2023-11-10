@@ -1,6 +1,7 @@
 import Users from "../models/userModel.js";
 import UserVerificationToken from '../models/auth.js';
 import sendEmail from "./index.js"
+import { handleError } from "./errorHandler.js";
 
 const VerificationToken = async ({ userId, token }) => {
 	const newVerificationToken = new UserVerificationToken({
@@ -49,7 +50,7 @@ export const SendVerification = async (req, res) => {
 		}
 	} catch (err) {
 		err.status = 'FAILED';
-		handleError(res, 400, err);
+		// handleError(res, err.status, err);
 	}
 };
 
@@ -130,7 +131,7 @@ export const signIn = async (req, res, next) => {
     const user = await Users.findOne({ email }).select("+password");
 
     if (!user) {
-      next("Invalid email or password");
+      next("Invalid -email or password");
       return;
     }
 

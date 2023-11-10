@@ -1,4 +1,4 @@
-import {} from 'dotenv/config'
+import 'dotenv/config'
 
 const environment = process.env.APP_ENVIRONMENT;
 

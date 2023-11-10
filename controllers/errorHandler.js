@@ -1,5 +1,5 @@
-require('dotenv').config();
-import { developerLog } from './logging.js';
+import 'dotenv/config'
+import developerLog from './logging.js';
 
 const environment = process.env.APP_ENVIRONMENT;
 
@@ -38,4 +38,4 @@ const handleError = (res, status, mainError) => {
 	}
 };
 
-export default { handleError };
+export { handleError };

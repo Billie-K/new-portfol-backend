@@ -1,4 +1,4 @@
-import {} from 'dotenv/config'
+import 'dotenv/config'
 import { createTransport } from 'nodemailer';
 import developerLog from './logging.js';
 
