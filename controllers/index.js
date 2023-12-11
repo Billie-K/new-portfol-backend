@@ -42,14 +42,14 @@ const sendEmail = async function (email, subject, message) {
 				resolve(info);
 			}
 		})
-		.then(() => {
-			developerLog('email sent sucessfully');
-			return 'Request submitted';
-		})
-		.catch((err) => {
-			developerLog('email not sent', err);
-			return `Email not sent: ${err.message}`
-		});
+		// .then(() => {
+		// 	developerLog('email sent sucessfully');
+		// 	return 'Request submitted';
+		// })
+		// .catch((err) => {
+		// 	developerLog('email not sent', err);
+		// 	return `Email not sent: ${err.message}`
+		// });
 	})
 	
 };
