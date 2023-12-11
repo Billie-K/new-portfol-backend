@@ -12,6 +12,7 @@ import router from "./routes/index.js";
 // import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 const app = express();
+app.set("trust proxy", true);
 
 // eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 8800;
