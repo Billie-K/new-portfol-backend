@@ -222,10 +222,6 @@ export const signIn = async (req, res, next) => {
   }
 };
 
-export const test = async (req, res) => {
+export const test = () => {
   sendEmail('billiemush@gmail.com', 'Portfol Greeting', 'Hi there Billie');
-  res.status(201).json({
-    success: true,
-    message: "Login successfully",
-  });
 }
