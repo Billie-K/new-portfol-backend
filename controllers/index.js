@@ -23,7 +23,8 @@ const sendEmail = async function (email, subject, message) {
 		}	
 	});
 
-	await transporter
+	await new Promise((resolve, reject) => {
+		transporter
 		.sendMail({
 			to: email,
 			from: {
@@ -33,6 +34,13 @@ const sendEmail = async function (email, subject, message) {
 			},
 			subject,
 			html: message,
+		}, (err, info) => {
+			if (err) {
+				console.error(err);
+				reject(err);
+			} else {
+				resolve(info);
+			}
 		})
 		.then(() => {
 			developerLog('email sent sucessfully');
@@ -42,6 +50,8 @@ const sendEmail = async function (email, subject, message) {
 			developerLog('email not sent', err);
 			return `Email not sent: ${err.message}`
 		});
+	})
+	
 };
 
 export default sendEmail;
