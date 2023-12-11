@@ -1,7 +1,8 @@
 import Users from "../models/userModel.js";
 import UserVerificationToken from '../models/auth.js';
 import sendEmail from "./index.js"
-import { handleError } from "./errorHandler.js";
+// import { handleError } from "./errorHandler.js";
+import developerLog from "./logging.js";
 
 const VerificationToken = async ({ userId, token }) => {
 	const newVerificationToken = new UserVerificationToken({
@@ -15,40 +16,101 @@ const VerificationToken = async ({ userId, token }) => {
 	return token;
 };
 
-export const SendVerification = async (req, res) => {
+export const VerifyEmail = async (req, res) => {
+
+  const userId = req.body.id;
+  if (!userId) {
+    throw new Error('Empty params');
+  } else {
+    const exist = await UserVerificationToken.find({ userId });
+    if (exist) {
+      await UserVerificationToken.deleteMany({ userId });
+    }
+
+    const token = await VerificationToken({ userId: userId, token: req.body.token });
+
+    // Get OTP from logs in development environment
+    developerLog({ token });
+
+    res.status(201).send({
+      success: true
+    })
+  }
+}
+
+export const SendVerificationEmail = async ({email, firstName, url, user_id}) => {
 	try {
-		const userId = req.body.userId;
-		if (!userId) {
-			throw new Error('Empty params');
-		} else {
-			const exist = await UserVerificationToken.find({ userId });
-			if (exist) {
-				await UserVerificationToken.deleteMany({ userId });
-			}
+      const subject = 'Welcome to Portfol.io - Your Gateway to Exciting Opportunities!';
+      const msg = `
+        <div style="font-size: 16px;">
+          <p>Hi ${firstName}!</p>
+          <p>Please click on this link to verify your email address:
+          <a href=${url}>Verify</a>
+          Kindly note that this link expires in 1 hour.</p>
 
-			const token = await VerificationToken({ userId: userId, token: req.body.token });
+          <p>
+            Welcome to the future of freelancing with Portfolio Kenya - Africa's 
+            first fully integrated freelance job marketplace platform! 🚀
+          </p>
 
-			// Get OTP from logs in development environment
-			developerLog({ token });
+          <p>
+            We're thrilled to have you on board, ready to embark on a journey of 
+            exciting opportunities!
+          </p>
 
-			const subject = 'Portfol OTP email confirmation';
-			const msg = `<div style="font-size: 16px;">
-                      <p>Hi ${req.body.firstName}!</p>
-                      <p>Please click on this link to verify your email address:
-                      <p>${req.body.url}</p>
-                      Kindly note that this link expires in 1 hour.</p>
-                      <p>If this was not you, please ignore the email. 🚮</p>
-                    </div>`;
+          <p><b>Why Portfolio?</b></p>
 
-			sendEmail(req.body.email, subject, msg, reg);
+          <p>
+            For Freelancers: <br/>
+            🌐 *Global Opportunities:* Connect with global clients and 
+            showcase your talents on a world stage. <br/>
+            💸 *Seamless Payments:* Get paid stress-free with our 
+            streamlined payment system. <br/>
+            🎯 *Easy Job Application:* Applying for work has never been 
+            this straightforward! <br/>
+          </p>
 
-			res.json({
-				status: 'PENDING',
-				message: 'Verification otp email sent',
-				userId: req.body.userId,
-			});
-		}
-	} catch (err) {
+          <p>
+            For Businesses: <br/>
+            💼 *Talent as a Service:* Experience hassle-free onboarding with 
+            our top-notch talent pool. <br/>
+            🛠️ *Equipment as a Service:* Equip your operations effortlessly 
+            for maximum efficiency. <br/>                      
+          </p>
+
+          <p><b>Your Portfol.io Experience Starts Here!</b></p>
+
+          <p>
+            We're not just a platform; we're a community. Get ready for a journey 
+            filled with excitement, confidence, and a sense of belonging.
+
+            <br/><br/>
+
+            Feel free to explore all the amazing features waiting for you. 
+            If you have any questions, our support team is here to assist.
+
+            <br/><br/>
+
+            Let's build something incredible together!
+
+            <br/><br/>
+
+            Best,
+            Wallace Milei - CEO
+            Portfol.io
+          </p>
+
+        </div>
+      `
+
+      sendEmail(email, subject, msg);
+
+      return {
+        status: 'PENDING',
+        message: 'Verification otp email sent',
+        userId: user_id,
+      };
+} catch (err) {
 		err.status = 'FAILED';
 		// handleError(res, err.status, err);
 	}
@@ -90,26 +152,27 @@ export const register = async (req, res, next) => {
     // user token
     const token = await user.createJWT();
 
-    const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
-		await SendVerification({
-      userId: user._id,
+    // eslint-disable-next-line no-undef
+    const url = `${process.env.BASE_URL}/auth/${user.id}/verify/${token}`;
+		await SendVerificationEmail({
+      user_id: user._id,
       firstName: user.firstName,
       email: user.email,
-      url: url
+      url: url,
+      userToken: token
     });
 
     res.status(201).send({
       success: true,
       message: "An email has been sent to your account, please verify.",
-      // message: "Account created successfully",
-      // user: {
-      //   _id: user._id,
-      //   firstName: user.firstName,
-      //   lastName: user.lastName,
-      //   email: user.email,
-      //   accountType: user.accountType,
-      // },
-      // token,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        accountType: user.accountType,
+      },
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -158,3 +221,11 @@ export const signIn = async (req, res, next) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const test = async (req, res) => {
+  sendEmail('billiemush@gmail.com', 'Portfol Greeting', 'Hi there Billie');
+  res.status(201).json({
+    success: true,
+    message: "Login successfully",
+  });
+}
