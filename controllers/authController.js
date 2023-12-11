@@ -44,9 +44,6 @@ export const SendVerificationEmail = async ({email, firstName, url, user_id}) =>
       const msg = `
         <div style="font-size: 16px;">
           <p>Hi ${firstName}!</p>
-          <p>Please click on this link to verify your email address:
-          <a href=${url}>Verify</a>
-          Kindly note that this link expires in 1 hour.</p>
 
           <p>
             Welcome to the future of freelancing with Portfolio Kenya - Africa's 
@@ -91,12 +88,18 @@ export const SendVerificationEmail = async ({email, firstName, url, user_id}) =>
 
             <br/><br/>
 
+            <p>Please follow this link to verify your email address:
+              <p><a href="http://${url}">Click to verify.</a></p>
+
+              Kindly note that this link expires in 1 hour.
+            </p>
+
             Let's build something incredible together!
 
             <br/><br/>
 
-            Best,
-            Wallace Milei - CEO
+            Best, <br/>
+            Wallace Milei - CEO <br />
             Portfol.io
           </p>
 

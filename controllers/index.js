@@ -32,7 +32,7 @@ const sendEmail = async function (email, subject, message) {
 				address: process.env.SMTP_USER
 			},
 			subject,
-			html: `${message}`,
+			html: message,
 		})
 		.then(() => {
 			developerLog('email sent sucessfully');
