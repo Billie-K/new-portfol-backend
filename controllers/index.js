@@ -1,12 +1,13 @@
 import 'dotenv/config'
 import { createTransport } from 'nodemailer';
-import developerLog from './logging.js';
+import smtp from 'nodemailer-smtp-transport';
+// import developerLog from './logging.js';
 
 export const Index = () => true;
 
 const sendEmail = async function (email, subject, message) {
 	//developerLog("process.env.SMTP_SERVER =", process.env.SMTP_SERVER);
-	const transporter = createTransport({
+	const transporter = createTransport(smtp({
 		// eslint-disable-next-line no-undef
 		host: process.env.SMTP_SERVER,
 		// eslint-disable-next-line no-undef
@@ -21,7 +22,7 @@ const sendEmail = async function (email, subject, message) {
 		tls: {
 			rejectUnauthorized: false
 		}	
-	});
+	}));
 
 	await new Promise((resolve, reject) => {
 		transporter
