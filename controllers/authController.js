@@ -34,7 +34,10 @@ export const VerifyEmail = async (req, res) => {
     await user.save()
     await UserVerificationToken.findByIdAndRemove(user_token._id);
 
-    res.send("email verified sucessfully");
+    // eslint-disable-next-line no-undef
+    const url = `http://${process.env.CLIENT_URL}/auth/verified/?name=${user.firstName}`
+
+    res.redirect(url)
   } catch (error) {
     res.status(400).send("An error occured");
   }
