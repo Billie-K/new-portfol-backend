@@ -1,6 +1,6 @@
 import express from "express";
 // import { rateLimit } from "express-rate-limit";
-import { register, signIn, test, SendVerificationEmail } from "../controllers/authController.js";
+import { register, signIn, test, VerifyEmail } from "../controllers/authController.js";
 
 // //ip rate limit
 // const limiter = rateLimit({
@@ -17,8 +17,7 @@ router.post("/register", register);
 // router.post("/register", limiter, register);
 router.post("/login", signIn);
 router.post("/test", test);
-router.post('/:id/verify/:token/', SendVerificationEmail
-);
+router.get('/:id/verify/:token/', VerifyEmail);
 
 
 export default router;

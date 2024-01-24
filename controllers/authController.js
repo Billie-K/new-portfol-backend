@@ -17,24 +17,26 @@ const VerificationToken = async ({ userId, token }) => {
 };
 
 export const VerifyEmail = async (req, res) => {
+  const {id, token} = req.params;
+  try {
+    const user = await Users.findOne({ _id: id });
 
-  const userId = req.body.id;
-  if (!userId) {
-    throw new Error('Empty params');
-  } else {
-    const exist = await UserVerificationToken.find({ userId });
-    if (exist) {
-      await UserVerificationToken.deleteMany({ userId });
-    }
+    if (!user) return res.status(400).send("Invalid link");
 
-    const token = await VerificationToken({ userId: userId, token: req.body.token });
+    const user_token = await UserVerificationToken.findOne({
+      userId: user._id,
+      token: token,
+    });
 
-    // Get OTP from logs in development environment
-    developerLog({ token });
+    if (!user_token) return res.status(400).send("Invalid link or token already used.");
 
-    res.status(201).send({
-      success: true
-    })
+    user.verified = true;
+    await user.save()
+    await UserVerificationToken.findByIdAndRemove(user_token._id);
+
+    res.send("email verified sucessfully");
+  } catch (error) {
+    res.status(400).send("An error occured");
   }
 }
 
@@ -153,10 +155,13 @@ export const register = async (req, res, next) => {
     });
 
     // user token
-    const token = await user.createJWT();
+    let token = await new UserVerificationToken({
+      userId: user._id,
+      token: await user.createJWT(),
+    }).save();
 
     // eslint-disable-next-line no-undef
-    const url = `${process.env.BASE_URL}/auth/${user.id}/verify/${token}`;
+    const url = `${process.env.BASE_URL}/auth/${user.id}/verify/${token.token}`;
 		await SendVerificationEmail({
       user_id: user._id,
       firstName: user.firstName,

@@ -40,6 +40,7 @@ const sendEmail = async function (email, subject, message) {
 				console.error(err);
 				reject(err);
 			} else {
+				console.log("info:", info)
 				resolve(info);
 			}
 		})
